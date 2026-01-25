@@ -1,0 +1,15 @@
+{
+  "short_name": "DAILY",
+  "name": "DAILY - Social Cloud",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a"
+}
