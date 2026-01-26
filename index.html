@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+
+<link rel="icon" type="image/png" href="https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png"> <link rel="apple-touch-icon" href="https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png"> <meta name="apple-mobile-web-app-capable" content="yes"> <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <meta name="apple-mobile-web-app-title" content="DAILY"> <link rel="manifest" href="manifest.json"> <meta name="theme-color" content="#0f172a">
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png"> 
+    <meta charset="UTF-8">
+    <title>DAILY - Il vostro lato migliore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Poppins', sans-serif; }
+        body { background: #0f172a; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
+        .glass-effect { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(251, 191, 36, 0.1); }
+        .logo-main { font-size: 3rem; font-weight: 900; background: linear-gradient(45deg, #fbbf24, #84cc16); -webkit-background-clip: text; color: transparent; }
+        .profile-card { transition: 0.3s; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05); }
+        .profile-card:hover { transform: translateY(-5px); border-color: #fbbf24; }
+        #imagePreview { width: 100%; max-height: 250px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; display: none; border: 2px solid #fbbf24; }
+        .post-card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.05); }
+        #chatBox { height: 350px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .bubble { max-width: 80%; padding: 8px 14px; border-radius: 15px; font-size: 0.9rem; }
+        .bubble-me { align-self: flex-end; background: #fbbf24; color: #0f172a; border-bottom-right-radius: 2px; }
+        .bubble-them { align-self: flex-start; background: #334155; color: white; border-bottom-left-radius: 2px; }
+        .animate-spin-slow { animation: rotate 8s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* Scrollbar nascosta per la griglia orizzontale in home se serve */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#0f172a] p-4">
+        <div class="glass-effect p-10 rounded-3xl w-full max-w-md text-center shadow-2xl">
+            <i class="fas fa-sun text-5xl text-yellow-400 mb-4 animate-spin-slow"></i>
+            <h1 class="text-4xl font-black text-white mb-6 tracking-tighter">DAILY</h1>
+            <div class="space-y-4">
+                <input type="text" id="loginUser" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-yellow-500 text-white" placeholder="Username">
+                <input type="password" id="loginPass" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-yellow-500 text-white" placeholder="Password">
+                <button id="btnLogin" class="w-full bg-yellow-500 text-gray-900 font-bold py-3 rounded-xl hover:bg-yellow-400 transition transform active:scale-95">ACCEDI</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden max-w-6xl mx-auto p-4 md:p-8">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-sun text-3xl text-yellow-400"></i>
+                <div class="logo-main tracking-tighter cursor-pointer" onclick="showHome()">DAILY</div>
+            </div>
+            
+            <nav class="flex flex-wrap justify-center gap-2 md:gap-4 bg-gray-900/50 p-2 rounded-2xl border border-white/5">
+                <button onclick="showHome()" class="px-4 py-2 hover:text-yellow-400 transition text-sm font-bold"><i class="fas fa-home mr-1"></i> Home</button>
+                <button onclick="openChatList()" class="px-4 py-2 hover:text-blue-400 transition text-sm font-bold"><i class="fas fa-comments mr-1"></i> Chat</button>
+                <button onclick="openFriendsSection()" class="px-4 py-2 hover:text-green-400 transition text-sm font-bold relative">
+                    <i class="fas fa-user-friends mr-1"></i> Amici
+                </button>
+                <button id="btnMyProfile" class="px-4 py-2 bg-yellow-500 text-gray-900 rounded-xl text-sm font-bold hover:bg-yellow-400 transition">Mio Profilo</button>
+                <button id="btnLogout" class="px-4 py-2 text-red-500 hover:bg-red-500/10 rounded-xl transition"><i class="fas fa-power-off"></i></button>
+            </nav>
+        </header>
+
+        <div id="secHome">
+            <div class="mb-10">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-3 text-white">
+                    <span class="w-6 h-1 bg-yellow-500 rounded-full"></span> Nuovi Utenti
+                </h2>
+                <div id="profilesGrid" class="flex overflow-x-auto gap-4 pb-4 hide-scroll">
+                    </div>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3 text-white">
+                    <i class="fas fa-stream text-yellow-500"></i> Feed Recenti
+                </h2>
+                <div id="homeFeedContainer" class="max-w-2xl mx-auto space-y-8">
+                    </div>
+            </div>
+        </div>
+
+        <div id="secChatList" class="hidden glass-effect p-6 rounded-3xl">
+            <h2 class="text-2xl font-bold mb-6 text-blue-400"><i class="fas fa-envelope-open-text mr-2"></i>Le tue Conversazioni</h2>
+            <div id="chatListGrid" class="space-y-3"></div>
+        </div>
+
+        <div id="secFriends" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-effect p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4 text-green-400"><i class="fas fa-arrow-down"></i> Richieste Ricevute</h3>
+                <div id="receivedReqs" class="space-y-3 text-sm text-gray-400">Nessuna richiesta</div>
+            </div>
+            
+            <div class="glass-effect p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4 text-yellow-400"><i class="fas fa-arrow-up"></i> Richieste Inviate</h3>
+                <div id="sentReqs" class="space-y-3 text-sm text-gray-400">Nessuna richiesta</div>
+            </div>
+
+            <div class="glass-effect p-6 rounded-3xl md:col-span-2 lg:col-span-1">
+                <h3 class="text-lg font-bold mb-4 text-blue-400"><i class="fas fa-users"></i> I Tuoi Amici</h3>
+                <div id="myFriendsList" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                    </div>
+            </div>
+
+            <div class="glass-effect p-6 rounded-3xl md:col-span-2 lg:col-span-1">
+                <h3 class="text-lg font-bold mb-4 text-purple-400"><i class="fas fa-magic"></i> Amici Consigliati</h3>
+                <div id="suggestedFriends" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                    </div>
+            </div>
+        </div>
+
+        <div id="secProfile" class="hidden glass-effect p-6 md:p-10 rounded-3xl">
+            <button onclick="showHome()" class="mb-8 text-yellow-500 flex items-center gap-2"><i class="fas fa-arrow-left"></i> Torna alla Home</button>
+            
+            <div class="flex flex-col md:flex-row gap-8 mb-12 items-center md:items-start">
+                <img id="pPic" src="" class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-yellow-500 object-cover">
+                <div class="flex-grow text-center md:text-left">
+                    <h2 id="pUser" class="text-4xl font-black text-white mb-1"></h2>
+                    <p id="pName" class="text-yellow-400 mb-4 italic"></p>
+                    
+                    <div onclick="showFriendsListModal()" class="flex justify-center md:justify-start gap-6 mb-4 cursor-pointer hover:opacity-80 transition">
+                        <div class="text-center">
+                            <span id="friendCount" class="block text-2xl font-bold text-white">0</span>
+                            <span class="text-xs text-gray-500 uppercase"><i class="fas fa-users"></i> Amici (Vedi)</span>
+                        </div>
+                    </div>
+
+                    <p id="pBio" class="text-gray-400 mb-6"></p>
+                    
+                    <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+                        <button id="btnOpenChat" class="hidden bg-blue-600 px-6 py-2 rounded-full font-bold text-white"><i class="fas fa-comment"></i> Messaggio</button>
+                        <button id="btnAddFriend" class="hidden bg-green-600 px-6 py-2 rounded-full font-bold text-white"><i class="fas fa-user-plus"></i> Invia Richiesta</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pOwnerOnly" class="hidden mb-12 bg-gray-900/40 p-6 rounded-2xl border border-white/5">
+                <img id="imagePreview" alt="Anteprima">
+                <textarea id="postTxt" class="w-full bg-gray-800 p-4 rounded-xl border border-gray-700 h-24 mb-4 text-white resize-none" placeholder="Cosa racconti oggi?"></textarea>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <select id="postPrivacy" class="bg-gray-700 text-white rounded-xl px-4 py-3 text-sm outline-none border border-gray-600">
+                        <option value="public">🌍 Pubblico (Tutti)</option>
+                        <option value="friends">👥 Solo Amici</option>
+                    </select>
+                    <label class="flex-grow bg-gray-700 p-3 rounded-xl text-center cursor-pointer text-sm text-white border border-gray-600 font-bold">
+                        <i class="fas fa-camera mr-2"></i> Foto
+                        <input type="file" id="postImgInput" accept="image/*" class="hidden">
+                    </label>
+                    <button id="btnPost" class="bg-green-600 px-10 py-3 rounded-xl font-bold text-white flex-grow">PUBBLICA</button>
+                </div>
+            </div>
+
+            <div id="pPosts" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+        </div>
+    </div>
+
+    <div id="chatModal" class="hidden fixed inset-0 z-[110] bg-black/80 flex items-center justify-center p-4">
+        <div class="glass-effect w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-gray-800/50">
+                <div class="flex items-center gap-3">
+                    <img id="chatTargetPic" src="" class="w-10 h-10 rounded-full object-cover">
+                    <span id="chatTargetUser" class="font-bold text-white text-xs"></span>
+                </div>
+                <button onclick="document.getElementById('chatModal').classList.add('hidden')" class="text-white text-2xl">&times;</button>
+            </div>
+            <div id="chatBox"></div>
+            <div class="p-4 bg-gray-900/50 flex gap-2">
+                <input type="text" id="chatInput" class="flex-grow bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white" placeholder="Scrivi...">
+                <button id="btnSendChat" class="bg-yellow-500 w-12 h-10 rounded-xl"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="friendsListModal" class="hidden fixed inset-0 z-[120] bg-black/90 flex items-center justify-center p-4">
+        <div class="glass-effect w-full max-w-md rounded-3xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white"><i class="fas fa-address-book text-yellow-500"></i> Amici di <span id="fListOwner"></span></h3>
+                <button onclick="document.getElementById('friendsListModal').classList.add('hidden')" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div id="friendsListContainer" class="max-h-64 overflow-y-auto space-y-3"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCN6HTrJti7FN2fFq4GsoCVISSNViSQcQI",
+            authDomain: "prova-276d9.firebaseapp.com",
+            databaseURL: "https://prova-276d9-default-rtdb.firebaseio.com",
+            projectId: "prova-276d9",
+            storageBucket: "prova-276d9.firebasestorage.app",
+            messagingSenderId: "628100849481",
+            appId: "1:628100849481:web:bd31672de3ac71f7300498"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- I 17 PROFILI ORIGINALI ---
+        const initialProfiles = [
+            { id: 1, username: "aghi.di_pino", password: "12345", name: "Silvana Aghi", profilePic: "https://i.ibb.co/gbJ8DFHq/Gemini-Generated-Image-kilq1fkilq1fkilq.png", bio: "Odiatemi voi che io ho da fare", posts: [] },
+            { id: 2, username: "black&white", password: "12345", name: "Walter White", profilePic: "https://i.ibb.co/mCXhfRy7/Gemini-Generated-Image-u7zvqu7zvqu7zvqu.png", bio: "TN, Rosmini 🎺", posts: [] },
+            { id: 3, username: "Nat.cupo", password: "12345", name: "Nathan Cupo", profilePic: "https://i.ibb.co/67jM0F6g/nathan.jpg", bio: "Milano❤️🖤", posts: [] },
+            { id: 4, username: "baffetti.nao", password: "12345", name: "Naomi Baffetti", profilePic: "https://i.ibb.co/fzRJJ82t/naomi.jpg", bio: "Queen slay🎀", posts: [] },
+            { id: 5, username: "contessa.elena", password: "12345", name: "Elena Contessa", profilePic: "https://i.ibb.co/xkhjXbG/elena.jpg", bio: "Un'artista si riconosce dagli occhi ⭐", posts: [] },
+            { id: 6, username: "curtains.dav", password: "12345", name: "Davide Curtis", profilePic: "https://i.ibb.co/gbJ8DFHq/Gemini-Generated-Image-kilq1fkilq1fkilq.png", bio: "nuvole e terra quadrata", posts: [] },
+            { id: 7, username: "asmaaa23", password: "12345", name: "Asma Sgarri", profilePic: "https://i.ibb.co/gbJ8DFHq/Gemini-Generated-Image-kilq1fkilq1fkilq.png", bio: "✨asma✨", posts: [] },
+            { id: 8, username: "gin.seng", password: "12345", name: "Gino Andrei", profilePic: "https://i.ibb.co/gbJ8DFHq/Gemini-Generated-Image-kilq1fkilq1fkilq.png", bio: "TN", posts: [] },
+            { id: 9, username: "giglio.estivo", password: "12345", name: "Adolfa Gigli", profilePic: "https://i.ibb.co/TMXG5cKr/adolfa.jpg", bio: "Scout⚜️", posts: [] },
+            { id: 10, username: "al.freddino", password: "12345", name: "Giada Alfredini", profilePic: "https://i.ibb.co/KxXR8BPd/giada.jpg", bio: "Scienze Applicate, 🏐", posts: [] },
+            { id: 11, username: "marzi.gian14", password: "12345", name: "Gianni Marzi", profilePic: "https://i.ibb.co/KxXR8BPd/giada.jpg", bio: "Ronzo-Chienis", posts: [] },
+            { id: 12, username: "piccionee67", password: "12345", name: "Cicerone Piccione", profilePic: "https://i.ibb.co/KxXR8BPd/giada.jpg", bio: "Pianista 🎹", posts: [] },
+            { id: 13, username: "ricky.liscio", password: "12345", name: "Riccardo Licio", profilePic: "https://i.ibb.co/MkV5n97x/riccardo.jpg", bio: "Centrocampista ⚽", posts: [] },
+            { id: 14, username: "ale.urna", password: "12345", name: "Alejandro Urna", profilePic: "https://i.ibb.co/MkV5n97x/riccardo.jpg", bio: "🏍️", posts: [] },
+            { id: 15, username: "vigedaviddz", password: "12345", name: "David Vige", profilePic: "https://i.ibb.co/gbJ8DFHq/Gemini-Generated-Image-kilq1fkilq1fkilq.png", bio: "Odiatemi voi", posts: [] },
+            { id: 16, username: "jakezampa_09", password: "12345", name: "Jake Zampa", profilePic: "https://i.ibb.co/gbJ8DFHq/Gemini-Generated-Image-kilq1fkilq1fkilq.png", bio: "Odiatemi voi", posts: [] },
+            { id: 17, username: "de.collins", password: "12345", name: "Denisio Collina", profilePic: "https://i.ibb.co/gbJ8DFHq/Gemini-Generated-Image-kilq1fkilq1fkilq.png", bio: "Odiatemi voi", posts: [] },
+            // ACCOUNT ADMIN INVISIBILE
+            { id: 99, username: "super.admin", password: "adminpass", name: "SISTEMA", profilePic: "https://cdn-icons-png.flaticon.com/512/6024/6024190.png", bio: "Account amministratore segreto.", isAdmin: true, posts: [] }
+        ];
+
+        let profilesData = [];
+        let loggedInUser = null;
+        let selectedImageData = null;
+        let activeChatUserId = null;
+        let currentProfileViewId = null;
+
+        const savedUser = localStorage.getItem('daily_session');
+        if (savedUser) {
+            loggedInUser = JSON.parse(savedUser);
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+        }
+
+        onValue(ref(db, 'social_data'), (snap) => {
+            const data = snap.val();
+            if (data) {
+                profilesData = data;
+                
+                // Refresh logica corrente
+                if(loggedInUser) {
+                    const updatedUser = profilesData.find(u => u.id === loggedInUser.id);
+                    if(updatedUser) {
+                        loggedInUser = updatedUser;
+                        localStorage.setItem('daily_session', JSON.stringify(loggedInUser));
+                    }
+                    // Se siamo nella home, aggiorna feed
+                    if(!document.getElementById('secHome').classList.contains('hidden')) {
+                        renderHomeGrid();
+                        renderHomeFeed();
+                    }
+                    // Se siamo negli amici, aggiorna liste
+                    if(!document.getElementById('secFriends').classList.contains('hidden')) {
+                        renderFriendsSection();
+                    }
+                    // Se siamo nel profilo, aggiorna
+                    if(currentProfileViewId) {
+                        const p = profilesData.find(x => x.id === currentProfileViewId);
+                        if(p) renderProfileData(p);
+                    }
+                }
+
+            } else {
+                set(ref(db, 'social_data'), initialProfiles);
+            }
+        });
+
+        // --- AUTH & NAV ---
+        document.getElementById('btnLogin').onclick = () => {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            const user = profilesData.find(x => x.username === u && x.password === p);
+            if(user) {
+                loggedInUser = user;
+                localStorage.setItem('daily_session', JSON.stringify(user));
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                showHome();
+            } else { alert("Credenziali errate!"); }
+        };
+
+        document.getElementById('btnLogout').onclick = () => {
+            if(confirm("Uscire?")) {
+                localStorage.removeItem('daily_session');
+                location.reload();
+            }
+        };
+
+        window.showHome = () => {
+            hideAllSections();
+            document.getElementById('secHome').classList.remove('hidden');
+            currentProfileViewId = null;
+            renderHomeGrid();
+            renderHomeFeed();
+        };
+
+        window.openFriendsSection = () => {
+            hideAllSections();
+            document.getElementById('secFriends').classList.remove('hidden');
+            renderFriendsSection();
+        };
+
+        window.openChatList = () => {
+            hideAllSections();
+            document.getElementById('secChatList').classList.remove('hidden');
+            // Logica chat list esistente...
+            const grid = document.getElementById('chatListGrid');
+            grid.innerHTML = '';
+            profilesData.forEach(p => {
+                if(p.id === loggedInUser.id || p.username === "super.admin") return;
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-4 bg-gray-800/40 rounded-2xl border border-white/5 hover:border-blue-500 cursor-pointer transition';
+                div.onclick = () => openChat(p);
+                div.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <img src="${p.profilePic}" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <div class="font-bold text-white">${p.username}</div>
+                            <div class="text-xs text-gray-500">Clicca per chattare</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-600"></i>
+                `;
+                grid.appendChild(div);
+            });
+        };
+
+        function hideAllSections() {
+            document.querySelectorAll('#mainApp > div').forEach(d => d.classList.add('hidden'));
+        }
+
+        // --- HOME LOGIC (Grid + Feed) ---
+        function renderHomeGrid() {
+            const grid = document.getElementById('profilesGrid');
+            grid.innerHTML = '';
+            profilesData.forEach(p => {
+                if (p.username === "super.admin") return;
+                const div = document.createElement('div');
+                div.className = 'flex-shrink-0 w-28 p-3 rounded-2xl bg-gray-800/50 border border-white/5 cursor-pointer text-center hover:bg-gray-700/50 transition';
+                div.onclick = () => openProfile(p.id);
+                div.innerHTML = `
+                    <img src="${p.profilePic}" class="w-16 h-16 rounded-full object-cover mb-2 mx-auto border border-yellow-500/30">
+                    <div class="font-bold text-white text-xs truncate">${p.username}</div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function renderHomeFeed() {
+            const container = document.getElementById('homeFeedContainer');
+            container.innerHTML = '';
+            
+            let allPosts = [];
+            const isAdmin = loggedInUser.username === "super.admin";
+
+            profilesData.forEach(user => {
+                if(user.posts && user.posts.length > 0) {
+                    user.posts.forEach((post, idx) => {
+                        // Filtri Privacy
+                        let isMe = user.id === loggedInUser.id;
+                        let isFriend = user.friends?.includes(loggedInUser.id);
+                        
+                        if (post.privacy === 'friends' && !isMe && !isFriend && !isAdmin) return;
+
+                        allPosts.push({
+                            ...post,
+                            authorId: user.id,
+                            authorName: user.username,
+                            authorPic: user.profilePic,
+                            originalIndex: idx // Serve per editing/interazioni
+                        });
+                    });
+                }
+            });
+
+            // Ordinamento Cronologico (Più recente in alto)
+            // Usa timestamp se esiste, altrimenti fallback sulla stringa data (meno preciso ma ok per vecchi post)
+            allPosts.sort((a, b) => {
+                const timeA = a.timestamp || 0;
+                const timeB = b.timestamp || 0;
+                // Se entrambi hanno timestamp, usa quello
+                if(timeA && timeB) return timeB - timeA;
+                // Se nessuno ha timestamp (vecchi post), mantieni ordine "stabile" o metti in fondo
+                return 0; 
+            });
+
+            if(allPosts.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-10">Nessun post recente. Inizia a seguire qualcuno o pubblica qualcosa!</div>';
+                return;
+            }
+
+            allPosts.forEach(post => {
+                const div = createPostElement(post, post.authorId, post.originalIndex, false);
+                container.appendChild(div);
+            });
+        }
+
+        // --- FRIENDS LOGIC ---
+        function renderFriendsSection() {
+            const recBox = document.getElementById('receivedReqs');
+            const sentBox = document.getElementById('sentReqs');
+            const friendsBox = document.getElementById('myFriendsList');
+            const suggestBox = document.getElementById('suggestedFriends');
+
+            recBox.innerHTML = ''; sentBox.innerHTML = ''; friendsBox.innerHTML = ''; suggestBox.innerHTML = '';
+
+            const myData = profilesData.find(u => u.id === loggedInUser.id);
+
+            // 1. Ricevute
+            if(myData.receivedRequests?.length > 0) {
+                myData.receivedRequests.forEach(rid => {
+                    const requester = profilesData.find(u => u.id === rid);
+                    recBox.innerHTML += `
+                        <div class="flex items-center justify-between bg-gray-800 p-3 rounded-xl">
+                            <div class="flex items-center gap-2">
+                                <img src="${requester.profilePic}" class="w-8 h-8 rounded-full">
+                                <span>${requester.username}</span>
+                            </div>
+                            <button onclick="window.acceptFriend(${rid})" class="bg-green-600 px-3 py-1 rounded-lg text-white font-bold text-xs hover:bg-green-500">ACCETTA</button>
+                        </div>`;
+                });
+            } else { recBox.innerHTML = '<div class="text-gray-500 italic">Nessuna richiesta.</div>'; }
+
+            // 2. Inviate
+            if(myData.sentRequests?.length > 0) {
+                myData.sentRequests.forEach(rid => {
+                    const target = profilesData.find(u => u.id === rid);
+                    sentBox.innerHTML += `<div class="bg-gray-800 p-3 rounded-xl flex items-center gap-2"><img src="${target.profilePic}" class="w-8 h-8 rounded-full"> <span>${target.username}</span></div>`;
+                });
+            } else { sentBox.innerHTML = '<div class="text-gray-500 italic">Nessuna richiesta.</div>'; }
+
+            // 3. I Tuoi Amici (con tasto Rimuovi)
+            if(myData.friends?.length > 0) {
+                myData.friends.forEach(fid => {
+                    const f = profilesData.find(u => u.id === fid);
+                    if(f) {
+                        friendsBox.innerHTML += `
+                            <div class="flex items-center justify-between bg-gray-800/50 p-3 rounded-xl hover:bg-gray-800 transition">
+                                <div class="flex items-center gap-3 cursor-pointer" onclick="openProfile(${f.id})">
+                                    <img src="${f.profilePic}" class="w-10 h-10 rounded-full object-cover">
+                                    <span class="font-bold">${f.username}</span>
+                                </div>
+                                <button onclick="window.removeFriend(${f.id})" class="text-red-500 hover:bg-red-500/20 p-2 rounded-lg" title="Rimuovi Amico">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                });
+            } else { friendsBox.innerHTML = '<div class="text-gray-500 italic">Non hai ancora amici.</div>'; }
+
+            // 4. Suggeriti (Non amici, non io, non admin, no richieste pendenti)
+            profilesData.forEach(u => {
+                if(u.id === loggedInUser.id || u.username === "super.admin") return;
+                const isFriend = myData.friends?.includes(u.id);
+                const isSent = myData.sentRequests?.includes(u.id);
+                const isRec = myData.receivedRequests?.includes(u.id);
+
+                if(!isFriend && !isSent && !isRec) {
+                    suggestBox.innerHTML += `
+                        <div class="flex items-center justify-between bg-gray-800/50 p-3 rounded-xl">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="openProfile(${u.id})">
+                                <img src="${u.profilePic}" class="w-10 h-10 rounded-full object-cover">
+                                <div class="text-sm font-bold">${u.username}</div>
+                            </div>
+                            <button onclick="window.sendFriendRequest(${u.id})" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white p-2 rounded-lg transition">
+                                <i class="fas fa-user-plus"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+            if(suggestBox.innerHTML === '') suggestBox.innerHTML = '<div class="text-gray-500 italic">Nessun suggerimento.</div>';
+        }
+
+        window.sendFriendRequest = (targetId) => {
+            const myIdx = profilesData.findIndex(u => u.id === loggedInUser.id);
+            const hisIdx = profilesData.findIndex(u => u.id === targetId);
+            
+            if(!profilesData[myIdx].sentRequests) profilesData[myIdx].sentRequests = [];
+            if(!profilesData[hisIdx].receivedRequests) profilesData[hisIdx].receivedRequests = [];
+
+            if(!profilesData[myIdx].sentRequests.includes(targetId)) {
+                profilesData[myIdx].sentRequests.push(targetId);
+                profilesData[hisIdx].receivedRequests.push(loggedInUser.id);
+                set(ref(db, 'social_data'), profilesData);
+            }
+        };
+
+        window.acceptFriend = (requestId) => {
+            const myIdx = profilesData.findIndex(u => u.id === loggedInUser.id);
+            const hisIdx = profilesData.findIndex(u => u.id === requestId);
+
+            if(!profilesData[myIdx].friends) profilesData[myIdx].friends = [];
+            if(!profilesData[hisIdx].friends) profilesData[hisIdx].friends = [];
+
+            profilesData[myIdx].friends.push(requestId);
+            profilesData[hisIdx].friends.push(loggedInUser.id);
+
+            // Pulizia
+            if(profilesData[myIdx].receivedRequests) 
+                profilesData[myIdx].receivedRequests = profilesData[myIdx].receivedRequests.filter(id => id !== requestId);
+            if(profilesData[hisIdx].sentRequests) 
+                profilesData[hisIdx].sentRequests = profilesData[hisIdx].sentRequests.filter(id => id !== loggedInUser.id);
+
+            set(ref(db, 'social_data'), profilesData);
+        };
+
+        window.removeFriend = (friendId) => {
+            if(!confirm("Sei sicuro di voler rimuovere questo amico?")) return;
+            
+            const myIdx = profilesData.findIndex(u => u.id === loggedInUser.id);
+            const friendIdx = profilesData.findIndex(u => u.id === friendId);
+
+            if (myIdx > -1 && profilesData[myIdx].friends) {
+                profilesData[myIdx].friends = profilesData[myIdx].friends.filter(id => id !== friendId);
+            }
+            if (friendIdx > -1 && profilesData[friendIdx].friends) {
+                profilesData[friendIdx].friends = profilesData[friendIdx].friends.filter(id => id !== loggedInUser.id);
+            }
+
+            set(ref(db, 'social_data'), profilesData);
+        };
+
+        // --- MODAL FRIENDS LIST ---
+        window.showFriendsListModal = () => {
+            if(!currentProfileViewId) return;
+            const p = profilesData.find(x => x.id === currentProfileViewId);
+            const listDiv = document.getElementById('friendsListContainer');
+            document.getElementById('fListOwner').textContent = p.username;
+            listDiv.innerHTML = '';
+
+            const isMyProfile = (loggedInUser.id === p.id);
+
+            if(p.friends && p.friends.length > 0) {
+                p.friends.forEach(fid => {
+                    const f = profilesData.find(x => x.id === fid);
+                    if(f) {
+                        const row = document.createElement('div');
+                        row.className = 'flex items-center justify-between p-2 bg-gray-800/50 rounded-xl hover:bg-gray-700';
+                        
+                        let removeBtn = '';
+                        if(isMyProfile) {
+                            removeBtn = `<button onclick="event.stopPropagation(); window.removeFriend(${f.id})" class="text-red-500 hover:text-white px-2"><i class="fas fa-trash"></i></button>`;
+                        }
+
+                        row.innerHTML = `
+                            <div class="flex items-center gap-3 cursor-pointer flex-grow" onclick="document.getElementById('friendsListModal').classList.add('hidden'); openProfile(${f.id})">
+                                <img src="${f.profilePic}" class="w-8 h-8 rounded-full object-cover">
+                                <span>${f.username}</span>
+                            </div>
+                            ${removeBtn}
+                        `;
+                        listDiv.appendChild(row);
+                    }
+                });
+            } else {
+                listDiv.innerHTML = '<p class="text-gray-500 italic">Nessun amico ancora.</p>';
+            }
+            document.getElementById('friendsListModal').classList.remove('hidden');
+        };
+
+        // --- PROFILE & POSTS ---
+        window.openProfile = (id) => {
+            const p = profilesData.find(x => x.id === id);
+            currentProfileViewId = id;
+            hideAllSections();
+            document.getElementById('secProfile').classList.remove('hidden');
+            renderProfileData(p);
+            window.scrollTo(0,0);
+        };
+
+        function renderProfileData(p) {
+            document.getElementById('pPic').src = p.profilePic;
+            document.getElementById('pUser').textContent = p.username;
+            document.getElementById('pName').textContent = p.name;
+            document.getElementById('pBio').textContent = p.bio;
+            document.getElementById('friendCount').textContent = p.friends?.length || 0;
+
+            const isMe = loggedInUser.id === p.id;
+            const areFriends = p.friends?.includes(loggedInUser.id);
+            const reqSent = loggedInUser.sentRequests?.includes(p.id);
+
+            document.getElementById('pOwnerOnly').classList.toggle('hidden', !isMe);
+            const btnChat = document.getElementById('btnOpenChat');
+            const btnAdd = document.getElementById('btnAddFriend');
+
+            if(isMe) {
+                btnChat.classList.add('hidden');
+                btnAdd.classList.add('hidden');
+            } else {
+                btnChat.classList.toggle('hidden', !areFriends);
+                btnChat.onclick = () => openChat(p);
+                
+                btnAdd.classList.toggle('hidden', areFriends || reqSent);
+                btnAdd.disabled = reqSent;
+                btnAdd.innerHTML = reqSent ? "Richiesta Inviata" : "<i class='fas fa-user-plus'></i> Invia Richiesta";
+                btnAdd.onclick = () => sendFriendRequest(p.id);
+            }
+
+            // Render post sul profilo (solo i suoi)
+            const container = document.getElementById('pPosts');
+            container.innerHTML = '';
+            const isAdmin = loggedInUser.username === "super.admin";
+            
+            if(p.posts) {
+                p.posts.slice().reverse().forEach((post, index) => {
+                    const realIdx = p.posts.length - 1 - index;
+                    if(post.privacy === 'friends' && !areFriends && !isMe && !isAdmin) return;
+                    
+                    // Aggiungo dati autore per riutilizzare la funzione createPostElement
+                    const postData = { ...post, authorName: p.username, authorPic: p.profilePic };
+                    container.appendChild(createPostElement(postData, p.id, realIdx, true));
+                });
+            }
+        }
+
+        // --- UNIVERSAL POST CREATOR ---
+        function createPostElement(post, authorId, postIndex, isProfileView) {
+            const d = document.createElement('div');
+            d.className = 'post-card p-5 rounded-2xl relative group mb-6'; // mb-6 per spaziamento nel feed
+
+            let imgPart = post.image ? `<img src="${post.image}" class="w-full max-h-96 object-cover rounded-xl mb-4 border border-white/5">` : '';
+            let likesCount = post.likes ? post.likes.length : 0;
+            let commCount = post.comments ? post.comments.length : 0;
+            let hasLiked = post.likes?.includes(loggedInUser.id);
+            let isAdmin = loggedInUser.username === "super.admin";
+            
+            let canDelete = (loggedInUser.id === authorId || isAdmin);
+            let delBtn = canDelete ? `
+                <button onclick="window.deletePost(${authorId}, ${postIndex})" class="absolute top-4 right-4 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white w-8 h-8 rounded-lg transition flex items-center justify-center z-10">
+                    <i class="fas fa-trash-alt"></i>
+                </button>` : "";
+
+            let privacyIcon = post.privacy === 'friends' ? '<i class="fas fa-user-friends text-green-400" title="Solo Amici"></i>' : '<i class="fas fa-globe text-gray-500" title="Pubblico"></i>';
+
+            // Header diverso se siamo nel feed (mostra autore) o profilo (autore ovvio)
+            let headerHTML = '';
+            if(!isProfileView) {
+                headerHTML = `
+                    <div class="flex items-center gap-3 mb-4 cursor-pointer" onclick="openProfile(${authorId})">
+                        <img src="${post.authorPic}" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <div class="font-bold text-white text-sm leading-tight">${post.authorName}</div>
+                            <div class="text-[10px] text-gray-400">${post.date} &bull; ${privacyIcon}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                headerHTML = `<div class="text-[10px] text-gray-500 mb-2 flex justify-between items-center"><span>${post.date}</span> ${privacyIcon}</div>`;
+            }
+
+            d.innerHTML = `
+                ${delBtn}
+                ${headerHTML}
+                ${imgPart}
+                <div class="mb-4">
+                     <p class="text-gray-200 whitespace-pre-wrap">${post.text}</p>
+                </div>
+                <div class="flex items-center gap-6 border-t border-white/5 pt-4">
+                    <button onclick="window.toggleLike(${authorId}, ${postIndex})" class="${hasLiked ? 'text-yellow-500' : 'text-gray-500'} font-bold text-sm hover:scale-110 transition">
+                        <i class="fas fa-heart"></i> ${likesCount}
+                    </button>
+                    <button onclick="window.addComment(${authorId}, ${postIndex})" class="text-gray-500 font-bold text-sm hover:text-blue-400 transition">
+                        <i class="fas fa-comment"></i> ${commCount}
+                    </button>
+                </div>
+                <div class="mt-4 space-y-2 max-h-32 overflow-y-auto">
+                    ${(post.comments || []).map(c => `<div class="text-xs bg-white/5 p-2 rounded-lg break-words"><b>${c.user}:</b> ${c.text}</div>`).join('')}
+                </div>
+            `;
+            return d;
+        }
+
+        // --- INTERACTIONS ---
+        window.toggleLike = (postOwnerId, postIndex) => {
+            const ownerIdx = profilesData.findIndex(u => u.id === postOwnerId);
+            const post = profilesData[ownerIdx].posts[postIndex];
+            if(!post.likes) post.likes = [];
+            
+            const likeIdx = post.likes.indexOf(loggedInUser.id);
+            if(likeIdx === -1) post.likes.push(loggedInUser.id);
+            else post.likes.splice(likeIdx, 1);
+
+            set(ref(db, 'social_data'), profilesData);
+        };
+
+        window.addComment = (postOwnerId, postIndex) => {
+            const text = prompt("Scrivi un commento:");
+            if(!text) return;
+
+            const ownerIdx = profilesData.findIndex(u => u.id === postOwnerId);
+            if(!profilesData[ownerIdx].posts[postIndex].comments) profilesData[ownerIdx].posts[postIndex].comments = [];
+            
+            profilesData[ownerIdx].posts[postIndex].comments.push({
+                user: loggedInUser.username,
+                text: text,
+                date: new Date().toLocaleTimeString()
+            });
+
+            set(ref(db, 'social_data'), profilesData);
+        };
+
+        window.deletePost = (uid, pIdx) => {
+            if(confirm("Eliminare definitivamente questo post?")) {
+                const uIdx = profilesData.findIndex(u => u.id === uid);
+                profilesData[uIdx].posts.splice(pIdx, 1);
+                set(ref(db, 'social_data'), profilesData);
+            }
+        };
+
+        // --- POST CREATION ---
+        document.getElementById('btnPost').onclick = () => {
+            const txt = document.getElementById('postTxt').value;
+            const privacy = document.getElementById('postPrivacy').value;
+            if(!txt && !selectedImageData) return;
+            const idx = profilesData.findIndex(u => u.id === loggedInUser.id);
+            if(!profilesData[idx].posts) profilesData[idx].posts = [];
+            
+            profilesData[idx].posts.push({ 
+                text: txt, 
+                image: selectedImageData,
+                privacy: privacy,
+                likes: [],
+                comments: [],
+                // Salviamo timestamp per ordinamento corretto
+                timestamp: Date.now(),
+                date: new Date().toLocaleString('it-IT', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) 
+            });
+            set(ref(db, 'social_data'), profilesData);
+            document.getElementById('postTxt').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            selectedImageData = null;
+        };
+
+        document.getElementById('postImgInput').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                selectedImageData = ev.target.result;
+                const prev = document.getElementById('imagePreview');
+                prev.src = selectedImageData;
+                prev.style.display = 'block';
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        // --- CHAT ---
+        window.openChat = (target) => {
+            activeChatUserId = target.id;
+            document.getElementById('chatTargetUser').textContent = target.username;
+            document.getElementById('chatTargetPic').src = target.profilePic;
+            document.getElementById('chatModal').classList.remove('hidden');
+            const cid = [loggedInUser.id, target.id].sort().join('_');
+            onValue(ref(db, 'chats/' + cid), (snap) => {
+                const box = document.getElementById('chatBox');
+                box.innerHTML = '';
+                if(snap.val()) Object.values(snap.val()).forEach(m => {
+                    const d = document.createElement('div');
+                    d.className = `bubble ${m.senderId === loggedInUser.id ? 'bubble-me' : 'bubble-them'}`;
+                    d.textContent = m.text;
+                    box.appendChild(d);
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        };
+
+        document.getElementById('btnSendChat').onclick = () => {
+            const inp = document.getElementById('chatInput');
+            if(!inp.value) return;
+            const cid = [loggedInUser.id, activeChatUserId].sort().join('_');
+            push(ref(db, 'chats/' + cid), { senderId: loggedInUser.id, text: inp.value, timestamp: Date.now() });
+            inp.value = '';
+        };
+
+        document.getElementById('btnMyProfile').onclick = () => openProfile(loggedInUser.id);
+    </script>
+</body>
+</html>
