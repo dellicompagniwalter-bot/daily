@@ -1,71 +1,24 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-
-<link rel="icon" type="image/png" href="https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png"> <link rel="apple-touch-icon" href="https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png"> <meta name="apple-mobile-web-app-capable" content="yes"> <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <meta name="apple-mobile-web-app-title" content="DAILY"> <link rel="manifest" href="manifest.json"> <meta name="theme-color" content="#0f172a">
-
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png"> 
     <meta charset="UTF-8">
     <title>DAILY - Il vostro lato migliore</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DAILY">
+    <meta name="theme-color" content="#0f172a">
+    
+    <link rel="icon" type="image/png" href="https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
-        /* Nascondiamo il tutorial di default */
-  #pwa-install-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(255, 255, 255, 0.98);
-    z-index: 9999;
-    text-align: center;
-    padding: 40px 20px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
-
-  /* Mostriamo il tutorial solo se NON siamo in modalità "standalone" (quindi siamo nel browser) */
-  /* E solo su dispositivi iOS/iPadOS */
-  @media (display-mode: browser) {
-    #pwa-install-overlay {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-
-  /* Se l'app è già installata e aperta dalla home, il tutorial sparisce */
-  @media (display-mode: standalone) {
-    #pwa-install-overlay {
-      display: none !important;
-    }
-  }
-
-  .pwa-icon { width: 80px; height: 80px; border-radius: 20%; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-  .pwa-steps { text-align: left; display: inline-block; margin-top: 30px; line-height: 1.6; }
-  .pwa-arrow { font-size: 30px; margin-top: 20px; animation: bounce 2s infinite; }
-  
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-    40% {transform: translateY(-10px);}
-    60% {transform: translateY(-5px);}
-  }
-</style>
-
-<div id="pwa-install-overlay">
-  <img src="IL_TUO_LOGO.png" alt="Logo" class="pwa-icon"> <h2>Installa Daily</h2>
-  <p>Per usare questo social su iPhone, devi aggiungerlo alla schermata Home.</p>
-  
-  <div class="pwa-steps">
-    1. Clicca sul tasto <strong>Condividi</strong> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/IOS_Share_Icon.svg/1200px-IOS_Share_Icon.svg.png" width="20" style="vertical-align: middle;"> in basso.<br>
-    2. Scorri verso il basso e scegli <strong>"Aggiungi alla schermata Home"</strong>.<br>
-    3. Clicca su <strong>Aggiungi</strong> in alto a destra.
-  </div>
-  
-  <div class="pwa-arrow">↓</div>
-</div>
+        /* --- STILI GENERALI APP --- */
         * { font-family: 'Poppins', sans-serif; }
         body { background: #0f172a; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
         .glass-effect { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(251, 191, 36, 0.1); }
@@ -80,13 +33,64 @@
         .bubble-them { align-self: flex-start; background: #334155; color: white; border-bottom-left-radius: 2px; }
         .animate-spin-slow { animation: rotate 8s linear infinite; }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        /* Scrollbar nascosta per la griglia orizzontale in home se serve */
         .hide-scroll::-webkit-scrollbar { display: none; }
+
+        /* --- STILE PER IL TUTORIAL PWA --- */
+        #pwa-install-overlay {
+            display: none; /* Nascosto di default, lo attiva JS solo se serve */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.98); /* Sfondo scuro coerente con l'app */
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+        .pwa-icon { width: 80px; height: 80px; border-radius: 20%; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 2px solid #fbbf24; }
+        .pwa-steps { text-align: left; display: inline-block; margin-top: 30px; line-height: 1.8; font-size: 0.95rem; color: #cbd5e1; }
+        .pwa-arrow { font-size: 30px; margin-top: 30px; color: #fbbf24; animation: bounce 2s infinite; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
     </style>
+
+    <script>
+        // Questa funzione parte appena il sito si carica
+        window.addEventListener('load', () => {
+            // 1. Capisce se è un iPhone/iPad
+            const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+            // 2. Capisce se l'app è già in modalità "App" (Standalone)
+            const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+            // Mostra il tutorial SOLO se è iOS e NON è ancora installata
+            if (isIOS && !isStandalone) {
+                document.getElementById('pwa-install-overlay').style.display = 'flex';
+            }
+        });
+    </script>
 </head>
 <body>
 
-    <div id="loginPage" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#0f172a] p-4">
+    <div id="pwa-install-overlay">
+        <img src="https://i.ibb.co/0psFMX6k/Gemini-Generated-Image-zgnwm3zgnwm3zgnw.png" alt="Logo" class="pwa-icon">
+        <h2 class="text-2xl font-bold text-white">Installa Daily</h2>
+        <p class="text-gray-400 mt-2">Per usare l'app su iPhone</p>
+        
+        <div class="pwa-steps">
+            1. Clicca su <strong>Condividi</strong> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/IOS_Share_Icon.svg/1200px-IOS_Share_Icon.svg.png" width="20" style="vertical-align: middle; filter: invert(1);"> in basso.<br>
+            2. Scorri e scegli <strong>"Aggiungi alla Home"</strong>.<br>
+            3. Clicca su <strong>Aggiungi</strong> in alto a destra.
+        </div>
+        
+        <div class="pwa-arrow">↓</div>
+    </div>
+
+  <div id="loginPage" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#0f172a] p-4">
         <div class="glass-effect p-10 rounded-3xl w-full max-w-md text-center shadow-2xl">
             <i class="fas fa-sun text-5xl text-yellow-400 mb-4 animate-spin-slow"></i>
             <h1 class="text-4xl font-black text-white mb-6 tracking-tighter">DAILY</h1>
@@ -833,3 +837,4 @@
 </body>
 
 </html>
+
